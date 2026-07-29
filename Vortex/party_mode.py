@@ -55,7 +55,7 @@ def bytebeat1(t):
     """Phase 1: Classic - t*(1+'4451'[t>>13&3]/10)&t>>9+(.003*t&3)"""
     idx = (t >> 13) & 3
     mult = 1 + int('4451'[idx]) / 10
-    return int(t * mult) & (t >> 9) + int(.003 * t & 3)
+    return (int(t * mult) & (t >> 9)) + int(.003 * t) & 3
 
 
 def bytebeat2(t):
@@ -63,7 +63,7 @@ def bytebeat2(t):
     arr = [2, 2, 2, 2, 3, 3, 4, 4]
     div = arr[(t >> 14) % 8]
     part1 = int(pow(2.75, -t / 2048 % 8 + 8)) & 128
-    part2 = (t * (t & (t >> 11)) & 64)
+    part2 = (t * (t & (t >> 11))) & 64
     part3 = (t // div) & 128
     return (part1 + part2) | part3
 
@@ -82,17 +82,23 @@ def bytebeat3(t):
 
 def bytebeat4(t):
     """Phase 4: Glitch - audio-reactive bars"""
-    return (t * (t >> 8) | t >> 9) & 46 & t >> 8 ^ (t & t >> 13 | t >> 6)
+    return ((t * (t >> 8) | (t >> 9)) & 46 & (t >> 8)) ^ ((t & (t >> 13)) | (t >> 6))
 
 
 def bytebeat5(t):
     """Phase 5: 3D Wireframe - complex harmonics"""
-    return (t * (t >> 12) & 63) | (t * (t >> 9) & 31) | ((t >> 7) & 15) * (t & 127)
+    return ((t * (t >> 12)) & 63) | ((t * (t >> 9)) & 31) | (((t >> 7) & 15) * (t & 127))
 
 
 def bytebeat6(t):
     """Phase 6: Final - takes mouse control, draws PARTY MODE, ends"""
-    return (((t >> 4) >> (t & (t >> 11))) * (((t >> 4) >> (t & (t >> 11))) & 128 and -1 or 1)) + (t >> t / (t & 65536 and 2 or 3) & 63) + (30000 / (t & 4095) & 100)
+    inner = (t >> 4) >> (t & (t >> 11))
+    sign = -1 if (inner & 128) else 1
+    part1 = inner * sign
+    div = 2 if (t & 65535) else 3
+    part2 = (t >> (t // div)) & 63
+    part3 = int(30000 / (t & 4095)) & 100
+    return (part1 + part2 + part3) & 255
 
 
 BYTEBEATS = [bytebeat1, bytebeat2, bytebeat3, bytebeat4, bytebeat5, bytebeat6]
@@ -140,12 +146,20 @@ class AudioThread(threading.Thread):
     def __init__(self):
         super().__init__(daemon=True)
         self.p = pyaudio.PyAudio()
+        # Find the default output device (usually PulseAudio/PipeWire)
+        self.device_index = None
+        for i in range(self.p.get_device_count()):
+            dev = self.p.get_device_info_by_index(i)
+            if dev['maxOutputChannels'] > 0:
+                self.device_index = i
+                break
         self.stream = self.p.open(
             format=pyaudio.paUInt8,
             channels=1,
             rate=SAMPLE_RATE,
             output=True,
-            frames_per_buffer=CHUNK_SIZE
+            frames_per_buffer=CHUNK_SIZE,
+            output_device_index=self.device_index
         )
 
     def run(self):
