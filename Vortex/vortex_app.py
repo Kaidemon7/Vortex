@@ -220,7 +220,6 @@ KEY_CONTENT_CHECK = "VORTEX-LINUX-2026"
 VORTEX_DATA_DIR = os.path.join(os.path.expanduser("~"), ".vortex")
 CHATS_FILE = os.path.join(VORTEX_DATA_DIR, "chats.json")
 OPENCODE_CHATS_FILE = os.path.join(VORTEX_DATA_DIR, "opencode_chats.json")
-os.makedirs(VORTEX_DATA_DIR, exist_ok=True)
 
 OPENROUTER_API_KEY = "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"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -520,6 +519,7 @@ class AIChatTab(QWidget):
 
     def save_chats(self):
         try:
+            os.makedirs(VORTEX_DATA_DIR, exist_ok=True)
             data = []
             for c in self.chat_history:
                 data.append({"title": c.get("title", "Chat"), "messages": c.get("messages", [])})
@@ -607,6 +607,7 @@ class AIChatTab(QWidget):
 
     def _save_opencode_chats(self):
         try:
+            os.makedirs(VORTEX_DATA_DIR, exist_ok=True)
             with open(OPENCODE_CHATS_FILE, "w") as f:
                 json.dump(self._oc_conversation, f, indent=2)
         except Exception:
