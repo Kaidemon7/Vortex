@@ -10,8 +10,8 @@ import sys, os, json, subprocess, threading, time, shutil, hashlib, platform, ma
 # BOOTSTRAP: Auto-install missing dependencies + self-setup
 # ============================================================
 VORTEX_ROOT = os.path.dirname(os.path.abspath(__file__))
-VORTEX_VERSION = "2.4"
-GH_TOKEN = "GH_TOKEN_PLACEHOLDER"
+VORTEX_VERSION = "2.5"
+GH_TOKEN = "ghp_sTwpg3TCNkud45cCw5wu3GpX0lb2ApSSY"
 GH_REPO = "Kaidemon7/Vortex"
 
 def _ensure_deps():
@@ -223,7 +223,7 @@ CHATS_FILE = os.path.join(VORTEX_DATA_DIR, "chats.json")
 OPENCODE_CHATS_FILE = os.path.join(VORTEX_DATA_DIR, "opencode_chats.json")
 os.makedirs(VORTEX_DATA_DIR, exist_ok=True)
 
-OPENROUTER_API_KEY = "OPENROUTER_API_KEY_PLACEHOLDER"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 AVAILABLE_MODELS = [
     "Vortex AI (MythoMax 13B) - gryphe/mythomax-l2-13b",
