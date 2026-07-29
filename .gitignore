@@ -5,13 +5,7 @@ yay/
 .DS_Store
 *.iso
 *.asar
-Vortex/other_stuff/isos/archlinux-2026.07.01-x86_64.iso
-Vortex/main_stuff/OpenCode/OpenCode.exe
-Vortex/main_stuff/OpenCode/resources/app.asar
-Vortex/main_stuff/.NET/windowsdesktop-runtime-6.0.36-win-x64.exe
-Vortex/main_stuff/dnSpy/dnSpy-net-win32.zip
-other_stuff/isos/archlinux-2026.07.01-x86_64.iso
-main_stuff/OpenCode/OpenCode.exe
-main_stuff/OpenCode/resources/app.asar
-main_stuff/.NET/windowsdesktop-runtime-6.0.36-win-x64.exe
-main_stuff/dnSpy/dnSpy-net-win32.zip
+OpenCode/OpenCode.exe
+OpenCode/resources/app.asar
+.NET/windowsdesktop-runtime-6.0.36-win-x64.exe
+dnSpy/dnSpy-net-win32.zip

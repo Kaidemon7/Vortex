@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 echo "=========================================="
-echo "  Vortex v2.3 - Build Script for Arch Linux"
+echo "  Vortex v2.4 - Build Script for Arch Linux"
 echo "=========================================="
 echo ""
 
@@ -62,21 +62,21 @@ mkdir -p "$SWTPM_STATE"
 
 echo ""
 echo "[*] Creating Vortex directories..."
-mkdir -p "$HOME/Vortex/main_stuff/APK_Tools"
-mkdir -p "$HOME/Vortex/main_stuff/IL2CPP_Dumper"
-mkdir -p "$HOME/Vortex/main_stuff/UABE"
-mkdir -p "$HOME/Vortex/main_stuff/OpenCode"
-mkdir -p "$HOME/Vortex/main_stuff/MetaDataEditor"
-mkdir -p "$HOME/Vortex/main_stuff/dnSpy"
-mkdir -p "$HOME/Vortex/main_stuff/VeraCrypt"
-mkdir -p "$HOME/Vortex/main_stuff/.NET"
-mkdir -p "$HOME/Vortex/main_stuff/Malwarebytes"
-mkdir -p "$HOME/Vortex/main_stuff/Kaid_Gaming"
-mkdir -p "$HOME/Vortex/other_stuff/icons"
-mkdir -p "$HOME/Vortex/other_stuff/encrypted"
-mkdir -p "$HOME/Vortex/other_stuff/isos"
-mkdir -p "$HOME/Vortex/other_stuff/launchers"
-mkdir -p "$HOME/Vortex/other_stuff/system_backup"
+mkdir -p "$HOME/Vortex/APK_Tools"
+mkdir -p "$HOME/Vortex/IL2CPP_Dumper"
+mkdir -p "$HOME/Vortex/UABE"
+mkdir -p "$HOME/Vortex/OpenCode"
+mkdir -p "$HOME/Vortex/MetaDataEditor"
+mkdir -p "$HOME/Vortex/dnSpy"
+mkdir -p "$HOME/Vortex/VeraCrypt"
+mkdir -p "$HOME/Vortex/.NET"
+mkdir -p "$HOME/Vortex/Malwarebytes"
+mkdir -p "$HOME/Vortex/Kaid_Gaming"
+mkdir -p "$HOME/Vortex/icons"
+mkdir -p "$HOME/Vortex/encrypted"
+mkdir -p "$HOME/Vortex/isos"
+mkdir -p "$HOME/Vortex/launchers"
+mkdir -p "$HOME/Vortex/system_backup"
 mkdir -p "$HOME/.local/share/vortex/isos"
 mkdir -p "$HOME/.local/share/vortex"
 
@@ -86,8 +86,8 @@ cp -n "001235873-KEY" "$HOME/Vortex/" 2>/dev/null || true
 
 echo ""
 echo "[*] Copying tool files..."
-[ -d "main_stuff" ] && cp -r main_stuff/* "$HOME/Vortex/main_stuff/" 2>/dev/null || true
-[ -d "other_stuff" ] && cp -r other_stuff/* "$HOME/Vortex/other_stuff/" 2>/dev/null || true
+[ -d "main_stuff" ] && cp -r main_stuff/* "$HOME/Vortex/" 2>/dev/null || true
+[ -d "other_stuff" ] && cp -r other_stuff/* "$HOME/Vortex/" 2>/dev/null || true
 
 echo ""
 echo "[*] Checking for large system tools..."
@@ -110,8 +110,9 @@ pyinstaller --onefile \
     --windowed \
     --name Vortex \
     --add-data "001235873-KEY:." \
-    --add-data "main_stuff:main_stuff" \
-    --add-data "other_stuff:other_stuff" \
+    --add-data "OpenCode:OpenCode" \
+    --add-data "icons:icons" \
+    --add-data "isos:isos" \
     --hidden-import PySide6.QtXml \
     --hidden-import PySide6.QtWebEngineWidgets \
     --hidden-import PySide6.QtWebEngineCore \

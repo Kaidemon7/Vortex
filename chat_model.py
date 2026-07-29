@@ -16,11 +16,9 @@ for line in sys.stdin:
     with torch.no_grad():
         outputs = model.generate(**inputs, max_new_tokens=80, do_sample=False, pad_token_id=tokenizer.eos_token_id)
     full = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    # Extract ONLY the first answer
     parts = full.split("### Answer:")
     if len(parts) >= 2:
         reply = parts[1].strip()
-        # Stop at any next ### marker
         for stop in ["### Question:", "###"]:
             if stop in reply:
                 reply = reply.split(stop)[0].strip()
