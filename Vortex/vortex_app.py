@@ -10,7 +10,7 @@ import sys, os, json, subprocess, threading, time, shutil, hashlib, platform, ma
 # BOOTSTRAP: Auto-install missing dependencies + self-setup
 # ============================================================
 VORTEX_ROOT = os.path.dirname(os.path.abspath(__file__))
-VORTEX_VERSION = "2.6"
+VORTEX_VERSION = "2.7"
 GH_REPO = "Kaidemon7/Vortex"
 
 def _ensure_deps():
