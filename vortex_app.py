@@ -10,7 +10,7 @@ import sys, os, json, subprocess, threading, time, shutil, hashlib, platform, ma
 # BOOTSTRAP: Auto-install missing dependencies + self-setup
 # ============================================================
 VORTEX_ROOT = os.path.dirname(os.path.abspath(__file__))
-VORTEX_VERSION = "2.5"
+VORTEX_VERSION = "2.6"
 GH_REPO = "Kaidemon7/Vortex"
 
 def _ensure_deps():
@@ -208,12 +208,12 @@ except:
 # CONFIG
 # ============================================================
 VORTEX_DIR = os.path.dirname(os.path.abspath(__file__))
-MAIN_STUFF = VORTEX_DIR
-OTHER_STUFF = VORTEX_DIR
-ICONS_DIR = os.path.join(VORTEX_DIR, "icons")
-ENCRYPTED_DIR = os.path.join(VORTEX_DIR, "encrypted")
-ISOS_DIR = os.path.join(VORTEX_DIR, "isos")
-LAUNCHERS_DIR = os.path.join(VORTEX_DIR, "launchers")
+MAIN_STUFF = os.path.join(VORTEX_DIR, "main_stuff")
+OTHER_STUFF = os.path.join(VORTEX_DIR, "other_stuff")
+ICONS_DIR = os.path.join(OTHER_STUFF, "icons")
+ENCRYPTED_DIR = os.path.join(OTHER_STUFF, "encrypted")
+ISOS_DIR = os.path.join(OTHER_STUFF, "isos")
+LAUNCHERS_DIR = os.path.join(OTHER_STUFF, "launchers")
 KEY_FILE_NAME = "001235873-KEY"
 KEY_CONTENT_CHECK = "VORTEX-LINUX-2026"
 
@@ -459,7 +459,7 @@ class AIChatTab(QWidget):
         oc_top_layout = QVBoxLayout()
         oc_top_layout.setContentsMargins(0, 0, 0, 0)
         self.oc_model = QFileSystemModel()
-        self.oc_dir = os.path.join(VORTEX_DIR, "OpenCode")
+        self.oc_dir = os.path.join(MAIN_STUFF, "OpenCode")
         self.oc_model.setRootPath(self.oc_dir if os.path.exists(self.oc_dir) else "/")
         self.oc_tree = QTreeView()
         self.oc_tree.setModel(self.oc_model)
@@ -2909,7 +2909,7 @@ class WipeTab(QWidget):
             os.path.join(home, "Videos"),
             os.path.join(home, "Music"),
             ISOS_DIR,
-            os.path.join(VORTEX_DIR, "system_backup"),
+            os.path.join(OTHER_STUFF, "system_backup"),
             os.path.join(OTHER_STUFF, "launchers"),
         ]
         reply = QMessageBox.critical(self, "FINAL CONFIRMATION",
@@ -3039,7 +3039,7 @@ class DangerTab(QWidget):
             os.path.join(home, "Videos"),
             os.path.join(home, "Music"),
             ISOS_DIR,
-            os.path.join(VORTEX_DIR, "system_backup"),
+            os.path.join(OTHER_STUFF, "system_backup"),
             os.path.join(OTHER_STUFF, "launchers"),
         ]
         reply = QMessageBox.critical(self, "FINAL CONFIRMATION",
@@ -3552,7 +3552,7 @@ class KaidGamingTab(QWidget):
         self.open_html()
 
     def _load_recent(self):
-        recents_file = os.path.join(VORTEX_DIR, "launchers", "recent_html.txt")
+        recents_file = os.path.join(OTHER_STUFF, "launchers", "recent_html.txt")
         if os.path.exists(recents_file):
             with open(recents_file, "r") as f:
                 for line in f.read().strip().split("\n"):
@@ -3560,7 +3560,7 @@ class KaidGamingTab(QWidget):
                         self.recent_list.addItem(line.strip())
 
     def _save_recent(self, url):
-        recents_file = os.path.join(VORTEX_DIR, "launchers", "recent_html.txt")
+        recents_file = os.path.join(OTHER_STUFF, "launchers", "recent_html.txt")
         os.makedirs(os.path.dirname(recents_file), exist_ok=True)
         recents = []
         if os.path.exists(recents_file):
@@ -3616,7 +3616,7 @@ class OpenCodeTab(QWidget):
 
         # File tree
         self.file_model = QFileSystemModel()
-        self.opencode_dir = os.path.join(VORTEX_DIR, "OpenCode")
+        self.opencode_dir = os.path.join(MAIN_STUFF, "OpenCode")
         self.file_model.setRootPath(self.opencode_dir if os.path.exists(self.opencode_dir) else "/")
         self.file_tree = QTreeView()
         self.file_tree.setModel(self.file_model)
@@ -3959,7 +3959,7 @@ class BackupTab(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(QLabel("<h2>💾 System Backup</h2>"))
         layout.addWidget(QLabel("<i>Backup important system files and configurations.</i>"))
-        self.backup_dir = os.path.join(VORTEX_DIR, "system_backup")
+        self.backup_dir = os.path.join(OTHER_STUFF, "system_backup")
         os.makedirs(self.backup_dir, exist_ok=True)
         self.info = QTextEdit(); self.info.setReadOnly(True)
         self.info.setStyleSheet("background:#1e1e1e;color:#d4d4d4;font-family:monospace;")
