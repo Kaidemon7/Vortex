@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaid Gaming</title>
+    <link rel="icon" href="Logo.png" type="image/x-icon">
+</head>
+<body style="background-color: black; margin: 0;">
+
+    <script>
+        let loggedIn = false;
+    </script>
+
+    <div id="Topbar">
+        <div style="text-align: center; position: fixed; top: 10px; left: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 1px;">
+            <button onclick="if(loggedIn){const c=document.getElementById('Chat'); c.style.display=(c.style.display=='block'?'none':'block');}else{alert('You must login first!');}" style="margin-top:50px; background-color:grey; outline:2px solid red; width:80px; height:35px; font-size:18px;">Chat</button>
+
+            <button onclick="if(loggedIn){document.getElementById('Games').style.display='block'; document.getElementById('home').style.display='none';}else{alert('You must login first!');}" style="margin-top: 50px; background-color: grey; outline: 2px solid red; width: 85px; height: 35px; font-size: 18px; padding: 0;">Games</button>
+
+            <button onclick="if(loggedIn){document.getElementById('Music').style.display='block'; document.getElementById('home').style.display='none';}else{alert('You must login first!');}" style="margin-top: 50px; background-color: grey; outline: 2px solid red; width: 85px; height: 35px; font-size: 18px; padding: 0;">Music</button>
+        </div>
+    </div>
+
+    <div id="home">
+        <h3 id="kaidgaming" style="font-family: 'Black Ops One', cursive; font-size: 72px; text-align: center; color: red; padding-top: 20px;">Kaid Gaming</h3>
+
+        <!-- Username/Password -->
+
+        <p style="color: grey; font-size: 17px; text-align: center;">Enter your Username here &#9660;</p>
+
+        <div style="text-align: center;">
+            <input id="username" style="width: 200px; height: 60px; font-size: 30px;">
+        </div>
+
+        <p style="color: grey; font-size: 17px; text-align: center;">Enter your Password here &#9660;</p>
+
+        <div style="text-align: center;">
+            <input id="password" type="password" style="width: 200px; height: 60px; font-size: 30px;">
+        </div>
+
+        <div style="text-align: center;">
+            <button onclick="checkLogin()" style="margin-top: 50px; background-color: grey; outline: 2px solid red; width: 200px; height: 50px; font-size: 40px">Enter</button>
+        </div>
+
+        <!-- Backround Changers-->
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 50px;">
+
+            <button onclick="document.body.style.backgroundColor='red'; document.getElementById('kaidgaming').style.color='red';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Red</button>
+
+            <button onclick="document.body.style.backgroundColor='black'; document.getElementById('kaidgaming').style.color='black';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Black</button>
+
+            <button onclick="document.body.style.backgroundColor='blue'; document.getElementById('kaidgaming').style.color='blue';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Blue</button>
+
+            <button onclick="document.body.style.backgroundColor='pink'; document.getElementById('kaidgaming').style.color='pink';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Pink</button>
+
+            <button onclick="document.body.style.backgroundColor='purple'; document.getElementById('kaidgaming').style.color='purple';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Purple</button>
+
+            <button onclick="document.body.style.backgroundColor='teal'; document.getElementById('kaidgaming').style.color='teal';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Teal</button>
+
+            <button onclick="document.body.style.backgroundColor='green'; document.getElementById('kaidgaming').style.color='green';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Green</button>
+
+            <button onclick="document.body.style.backgroundColor='yellow'; document.getElementById('kaidgaming').style.color='yellow';" style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">Yellow</button>
+
+        </div>
+
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+            import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+            import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyAjjoLkq9VTI3FA6TzzjvT44sNdl-xRc14",
+                authDomain: "kaid-gaming-v3.firebaseapp.com",
+                databaseURL: "https://kaid-gaming-v3-default-rtdb.firebaseio.com",
+                projectId: "kaid-gaming-v3",
+                storageBucket: "kaid-gaming-v3.firebasestorage.app",
+                messagingSenderId: "443033890269",
+                appId: "1:443033890269:web:f8e87ce0248e0f90acda34",
+                measurementId: "G-30W4JMEVDE"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const analytics = getAnalytics(app);
+            const db = getDatabase(app);
+
+            window.checkLogin = function () {
+                const username = document.getElementById("username").value;
+                const email = username + "@kaidgaming.com";
+                const password = document.getElementById("password").value;
+
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then(() => {
+                        alert("Account created!");
+                        loggedIn = true;
+                        window.username = username;
+                        document.getElementById("home").style.display = "none";
+                        document.getElementById("Games").style.display = "block";
+                    })
+                    .catch((error) => {
+                        if (error.code === "auth/email-already-in-use") {
+                            signInWithEmailAndPassword(auth, email, password)
+                                .then(() => {
+                                    alert("Logged in!");
+                                    loggedIn = true;
+                                    window.username = username;
+                                    document.getElementById("home").style.display = "none";
+                                    document.getElementById("Games").style.display = "block";
+                                })
+                                .catch(() => {
+                                    alert("Wrong password!");
+                                });
+                        } else {
+                            alert(error.message);
+                        }
+                    });
+            };
+
+            window.sendMessage = function () {
+                const message = document.getElementById("message").value;
+
+                if (message.trim() === "") return;
+
+                push(ref(db, "chat"), {
+                    username: window.username,
+                    message: message
+                });
+
+                document.getElementById("message").value = "";
+            };
+
+            onChildAdded(ref(db, "chat"), (snapshot) => {
+                const data = snapshot.val();
+
+                document.getElementById("chatBox").innerHTML +=
+                    "<p><b style='color:red;'>" + data.username + ":</b> " + data.message + "</p>";
+
+                document.getElementById("chatBox").scrollTop =
+                    document.getElementById("chatBox").scrollHeight;
+            });
+        </script>
+    </div>
+
+    <!-- This  is the Games
+    also known as page 2 -->
+    <div id="Games" style="display: none; text-align: center; color: white;">
+
+        <!-- This is the Kaid Gaming title name thingy-->
+
+        <h3 id="kaidgaming2" style="font-size: 40px; color: red; text-align: top;">Kaid Gaming</h3>
+
+        <!--These are the backround buttons-->
+        <!-- Backround buttons	 -->
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 50px;">
+
+            <button onclick="document.body.style.backgroundColor='red'; document.getElementById('kaidgaming2').style.color='black';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Red
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='black'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Black
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='blue'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Blue
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='pink'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Pink
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='purple'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Purple
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='teal'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Teal
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='green'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Green
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='yellow'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Yellow
+            </button>
+
+        </div>
+
+    </div>
+
+    <div id="Chat" style="display:none; position:fixed; top:0; right:0; width:320px; height:100%; background:#1a1a1a; border-left:2px solid red; color:white; padding:10px; box-sizing:border-box;">
+
+        <h2 style="color:red; text-align:center;">Chat</h2>
+
+        <div id="chatBox" style="height:80%; overflow-y:auto; border:1px solid white; padding:5px; margin-bottom:10px;"></div>
+
+        <input id="message" type="text" placeholder="Type a message..." style="width:230px; height:30px;">
+
+        <button onclick="sendMessage()" style="height:35px;">Send</button>
+
+    </div>
+
+    <div id="Music" style="display: none; text-align: top; color: white;">
+
+     <!-- this is the kaid gaming title -->
+
+        <!--These are the music buttons-->
+
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 50px;">
+
+            <button onclick="document.body.style.backgroundColor='red'; document.getElementById('kaidgaming2').style.color='black';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Red
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='black'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Black
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='blue'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Blue
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='pink'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Pink
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='purple'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Purple
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='teal'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Teal
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='green'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Green
+            </button>
+
+            <button onclick="document.body.style.backgroundColor='yellow'; document.getElementById('kaidgaming2').style.color='red';"
+                    style="background-color:grey; outline:2px solid red; width:200px; height:50px; font-size:20px;">
+                Yellow
+            </button>
+
+        </div>
+
+    </div>
+
+        </div>
+</body>
+</html>

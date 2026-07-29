@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Vortex
+GenericName=Linux Utility Hub
+Comment=All-in-one AI, tools, file manager, terminal, code editor, VM, antivirus, modding
+Exec=/usr/local/bin/vortex
+Icon=utilities-terminal
+Terminal=false
+Type=Application
+Categories=Utility;Development;System;
+Keywords=vortex;ai;tools;utility;
+StartupWMClass=Vortex
