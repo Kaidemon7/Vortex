@@ -2948,6 +2948,152 @@ class WipeTab(QWidget):
             "  sudo shred -vfz /dev/sdX")
 
 # ============================================================
+# TAB: DANGER ZONE (Wipe + Party Mode)
+# ============================================================
+class DangerTab(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel("<h2>☠️ DANGER ZONE</h2>"))
+        layout.addWidget(QLabel("<b style='color:red;font-size:16px;'>WARNING: These actions are irreversible or destructive!</b>"))
+
+        # Wipe section (moved here)
+        wipe_group = QGroupBox("💀 WIPE")
+        wipe_layout = QVBoxLayout()
+        wipe_layout.addWidget(QLabel("<b style='color:red;'>DANGER: This will permanently delete all your files!</b>"))
+        wipe_layout.addWidget(QLabel("<i>Type 'wipe' 3 times, then confirm 3 times.</i>"))
+
+        self.wipe_input = QLineEdit()
+        self.wipe_input.setPlaceholderText("Type 'wipe' 3 times (press Enter each time)")
+        self.wipe_input.returnPressed.connect(self.check_wipe)
+        self.wipe_input.setStyleSheet("padding:8px;font-size:14px;background:#1e1e1e;color:red;")
+
+        self.wipe_status = QLabel("Wipe count: 0/3")
+        self.wipe_status.setStyleSheet("font-size:14px;color:red;")
+
+        self.wipe_confirm_btn = QPushButton("I want my files to be deleted permanently forever")
+        self.wipe_confirm_btn.setEnabled(False)
+        self.wipe_confirm_btn.clicked.connect(self.confirm_wipe)
+        self.wipe_confirm_btn.setStyleSheet("padding:15px;font-size:14px;background:#8b0000;color:white;font-weight:bold;")
+
+        self.wipe_confirm_label = QLabel("Confirm count: 0/3")
+        self.wipe_confirm_label.setStyleSheet("font-size:14px;color:red;")
+
+        wipe_layout.addWidget(self.wipe_input); wipe_layout.addWidget(self.wipe_status)
+        wipe_layout.addWidget(self.wipe_confirm_btn); wipe_layout.addWidget(self.wipe_confirm_label)
+        wipe_group.setLayout(wipe_layout)
+        layout.addWidget(wipe_group)
+
+        # Party Mode section
+        party_group = QGroupBox("🎉 PARTY MODE")
+        party_layout = QVBoxLayout()
+        party_layout.addWidget(QLabel("<b>Plays bytebeat audio with visual chaos on your screen.</b>"))
+        party_layout.addWidget(QLabel("<i>Press <b>Ctrl+C</b> in terminal to stop at any time.</i>"))
+
+        self.party_btn = QPushButton("🎉 LAUNCH PARTY MODE")
+        self.party_btn.setStyleSheet("padding:15px;font-size:16px;background:#ff00ff;color:white;font-weight:bold;")
+        self.party_btn.clicked.connect(self.launch_party)
+
+        self.party_status = QLabel("Ready to party")
+        self.party_status.setStyleSheet("font-size:13px;color:#ff00ff;")
+
+        party_layout.addWidget(self.party_btn); party_layout.addWidget(self.party_status)
+        party_group.setLayout(party_layout)
+        layout.addWidget(party_group)
+
+        layout.addStretch()
+        self.setLayout(layout)
+
+    def check_wipe(self):
+        text = self.wipe_input.text().strip().lower()
+        if text == "wipe":
+            self.wipe_count = getattr(self, 'wipe_count', 0) + 1
+            self.wipe_status.setText(f"Wipe count: {self.wipe_count}/3")
+            self.wipe_input.clear()
+            if self.wipe_count >= 3:
+                self.wipe_input.setEnabled(False)
+                self.wipe_confirm_btn.setEnabled(True)
+                self.wipe_input.setPlaceholderText("✅ 'wipe' entered 3 times. Now click confirm.")
+        else:
+            QMessageBox.warning(self,"Wrong","Type exactly 'wipe' (without quotes).")
+            self.wipe_input.clear()
+
+    def confirm_wipe(self):
+        self.confirm_count = getattr(self, 'confirm_count', 0) + 1
+        self.wipe_confirm_label.setText(f"Confirm count: {self.confirm_count}/3")
+        if self.confirm_count >= 3:
+            reply = QMessageBox.critical(self,"FINAL WARNING",
+                "THIS WILL PERMANENTLY DELETE EVERYTHING ON YOUR SYSTEM!\n\n"
+                "Are you absolutely sure? This cannot be undone!",
+                QMessageBox.Yes|QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.do_wipe()
+
+    def do_wipe(self):
+        home = os.path.expanduser("~")
+        targets = [
+            os.path.join(home, "Documents"),
+            os.path.join(home, "Downloads"),
+            os.path.join(home, "Desktop"),
+            os.path.join(home, "Pictures"),
+            os.path.join(home, "Videos"),
+            os.path.join(home, "Music"),
+            ISOS_DIR,
+            os.path.join(VORTEX_DIR, "system_backup"),
+            os.path.join(OTHER_STUFF, "launchers"),
+        ]
+        reply = QMessageBox.critical(self, "FINAL CONFIRMATION",
+            "This will PERMANENTLY DELETE ALL personal data:\n"
+            "  • ~/Documents, ~/Downloads, ~/Desktop\n"
+            "  • ~/Pictures, ~/Videos, ~/Music\n"
+            "  • Vortex ISOs, backups, launchers\n\n"
+            "This CANNOT be undone. Encrypted files are preserved separately.\n\n"
+            "Are you ABSOLUTELY sure?",
+            QMessageBox.Yes | QMessageBox.No)
+        if reply != QMessageBox.Yes: return
+
+        deleted = 0
+        freed = 0
+        for target in targets:
+            if not os.path.exists(target): continue
+            for f in os.listdir(target):
+                fp = os.path.join(target, f)
+                try:
+                    sz = os.path.getsize(fp) if os.path.isfile(fp) else 0
+                    if os.path.isdir(fp) and not os.path.islink(fp):
+                        shutil.rmtree(fp)
+                    elif os.path.isfile(fp):
+                        os.remove(fp)
+                    deleted += 1
+                    freed += sz
+                except: pass
+
+        self.wipe_status.setText(f"⚠️ WIPE COMPLETE - {deleted} items deleted ({freed/(1024*1024):.0f} MB freed)")
+        self.wipe_confirm_label.setText("⚠️ All user data destroyed. Encrypted backup preserved in separate folder.")
+        QMessageBox.warning(self, "Wipe Complete",
+            f"✅ {deleted} items permanently deleted.\n"
+            f"💾 Freed {freed/(1024*1024):.0f} MB.\n\n"
+            "To securely wipe the entire drive (overwrite all sectors),\n"
+            "boot from a live USB and run:\n"
+            "  sudo shred -vfz /dev/sdX")
+
+    def launch_party(self):
+        self.party_btn.setEnabled(False)
+        self.party_status.setText("🎉 PARTY MODE ACTIVE - Press Ctrl+C in terminal to stop")
+        self.party_status.setStyleSheet("font-size:13px;color:#ff00ff;background:#1e1e1e;padding:5px;")
+
+        import subprocess
+        party_script = os.path.join(VORTEX_DIR, "party_mode.py")
+        if os.path.exists(party_script):
+            try:
+                # Run in a new terminal so user can Ctrl+C
+                subprocess.Popen(["xterm", "-e", "python3", party_script])
+            except Exception as e:
+                self.party_status.setText(f"❌ Error: {e}")
+        else:
+            self.party_status.setText("❌ party_mode.py not found")
+
+# ============================================================
 # TAB 14: ANTIVIRUS / FIREWALL
 # ============================================================
 class SecurityTab(QWidget):
@@ -4131,7 +4277,7 @@ class VortexMain(QMainWindow):
         self.tabs.addTab(ISOTab(), "💿 ISO Tools")
         self.tabs.addTab(SystemdTab(), "⚙️ Systemd")
         self.tabs.addTab(BackupTab(), "💾 Backup")
-        self.tabs.addTab(WipeTab(), "⚠️ WIPE")
+        self.tabs.addTab(DangerTab(), "☠️ DANGER")
 
         # Status bar
         self.sb = QStatusBar()
